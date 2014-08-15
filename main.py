@@ -20,11 +20,13 @@ DOWNLOAD_HEADER = {
  "Connection": "keep-alive"
 }
 
+
 def save_torrent_file(filename, data):
 
     f = open(filename, "wb+")
     f.write(data)
     f.close()
+
 
 def parse_watchlist(filename):
 
@@ -54,10 +56,11 @@ def search_torrent(wlist):
                 m = re.search("page=download&#38;tid=\d+", results).group(0)
                 m = m.replace("#38;", "")
                 download_val.append(m)
-            elif response.url.find("page=search&") is not -1:
+            elif response.url.find("page=search") is not -1:
                 print(x + " is not found or has no unique results")
             else:
-                print(x + " unknown error" )
+                print(x + " unknown error")
+                print("\t" + response.url)
 
         except Exception as e:
             print(e.reason)
@@ -79,6 +82,7 @@ def download_torrent(download_val):
             save_torrent_file(filename, response.read())
             count += 1
             print("saved " + filename)
+
         except Exception as e:
             print(e.reason)
             print(e.message)
@@ -86,16 +90,12 @@ def download_torrent(download_val):
     return count
 
 
-
 if __name__ == "__main__":
 
     wlist = parse_watchlist("watchlist.txt")
-    print(wlist)
     download_val = search_torrent(wlist)
-    print(download_val)
-
     ret = download_torrent(download_val)
+
     print("downloaded " + str(ret) + " file(s).")
-    # download torrent if exist
 
 
